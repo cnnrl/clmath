@@ -13,6 +13,9 @@ template <typename T, std::size_t N> struct Vector {
 };
 
 template <typename T, std::size_t N>
+inline constexpr Vector<T, N> zero_vector{};
+
+template <typename T, std::size_t N>
 constexpr Vector<T, N> operator+(const Vector<T, N> &left,
                                  const Vector<T, N> &right) {
   Vector<T, N> res{};
@@ -24,6 +27,15 @@ constexpr Vector<T, N> operator+(const Vector<T, N> &left,
 }
 
 template <typename T, std::size_t N>
+constexpr Vector<T, N>& operator+=(Vector<T, N>& left, 
+                          const Vector<T, N>& right) {
+  for (std::size_t i {0}; i < N; ++i) {
+    left[i] += right[i];
+  }
+  return left;
+}
+
+template <typename T, std::size_t N>
 constexpr Vector<T, N> operator-(const Vector<T, N> &left,
                                  const Vector<T, N> &right) {
   Vector<T, N> res{};
@@ -32,6 +44,15 @@ constexpr Vector<T, N> operator-(const Vector<T, N> &left,
   }
 
   return res;
+}
+
+template <typename T, std::size_t N>
+constexpr Vector<T, N>& operator-=(Vector<T, N>& left, 
+                          const Vector<T, N>& right) {
+  for (std::size_t i {0}; i < N; ++i) {
+    left[i] -= right[i];
+  }
+  return left;
 }
 
 template <typename T, std::size_t N>
@@ -52,6 +73,36 @@ constexpr Vector<T, N> operator*(const Vector<T, N> &left, T scalar) {
   }
 
   return res;
+}
+
+template <typename T, std::size_t N>
+constexpr Vector<T, N>& operator*=(Vector<T, N> &left, T scalar) {
+  for (std::size_t i{0}; i < N; ++i) {
+    left[i] *= scalar;
+  }
+
+  return left;
+}
+
+template <typename T, std::size_t N>
+constexpr Vector<T, N> operator/(const Vector<T, N> &left, T scalar) {
+  Vector<T, N> res{};
+  T recip {1 / scalar};
+  for (std::size_t i{0}; i < N; ++i) {
+    res[i] = left[i] * recip;
+  }
+
+  return res;
+}
+
+template <typename T, std::size_t N>
+constexpr Vector<T, N>& operator/=(Vector<T, N> &left, T scalar) {
+  T recip {1 / scalar};
+  for (std::size_t i{0}; i < N; ++i) {
+    left[i] *= recip;
+  }
+
+  return left;
 }
 
 template <typename T, std::size_t N>
@@ -90,3 +141,31 @@ constexpr Vector<T, N> cross(const Vector<T, N> &left, const Vector<T, N> &right
   return res;
 }
 
+template <typename T, std::size_t N>
+constexpr double magnitude(const Vector<T, N> &vec) {
+  double prod {0};
+  for (std::size_t i {0}; i < N; ++i) {
+    prod += vec[i] * vec[i];
+  }
+
+  return std::sqrt(prod);
+}
+
+template <typename T, std::size_t N>
+constexpr double magnitudeSquared(const Vector<T, N> &vec) {
+  double prod {0};
+  for (std::size_t i {0}; i < N; ++i) {
+    prod += vec[i] * vec[i];
+  }
+
+  return prod;
+}
+
+template <typename T, std::size_t N>
+constexpr Vector<T, N> normalize(const Vector<T, N> &vec) {
+  double mag {magnitude(vec)};
+  if (mag == 0) {
+    return zero_vector<T, N>;
+  }
+  return ( 1.0 / mag) * vec;
+}
