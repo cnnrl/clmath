@@ -1,5 +1,6 @@
 #pragma once
 #include <cstddef>
+#include <random>
 
 template <typename T, std::size_t N> struct Vector {
   T data[N];
@@ -48,6 +49,20 @@ constexpr Vector<T, N> operator*(const Vector<T, N> &left, T scalar) {
   Vector<T, N> res{};
   for (std::size_t i{0}; i < N; ++i) {
     res[i] = left[i] * scalar;
+  }
+
+  return res;
+}
+
+template <typename T, std::size_t N>
+Vector<T, N> randVec(T min, T max) {
+  std::random_device rd{};
+  std::mt19937 gen{rd()};
+  std::uniform_real_distribution<T> dist{min, max};
+
+  Vector<T, N> res{};
+  for (std::size_t i{0}; i < N; ++i) {
+    res[i] = dist(gen);
   }
 
   return res;
